@@ -409,6 +409,7 @@ bool SyntaxChecker::visit(ContractDefinition const& _contract)
 				"Functions are not allowed to have the same name as the contract. "
 				"If you intend this to be a constructor, use \"constructor(...) { ... }\" to define it."
 			);
+
 	return true;
 }
 

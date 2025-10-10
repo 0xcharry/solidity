@@ -113,23 +113,29 @@ self-contained (i.e. it does not refer to any external files that would have to 
 Linux Packages
 ==============
 
-Binary packages of Solidity are available at
-`solidity/releases <https://github.com/argotorg/solidity/releases>`_.
+We provide :ref:`standalone binaries <static-binaries>` of the compiler that should run on most
+distributions without any additional installation steps.
+
+Some Linux distributions provide their own packages.
+These packages are not directly maintained by us but usually kept up-to-date by the respective
+package maintainers.
 
 Ubuntu packages for versions up to 0.8.30 are available in the
 `ethereum/ethereum PPA <https://launchpad.net/~ethereum/+archive/ubuntu/ethereum>`_.
 However, we have discontinued this distribution method and future versions will not be added there.
 
-Furthermore, some Linux distributions provide their own packages. These packages are not directly
-maintained by us but usually kept up-to-date by the respective package maintainers.
-
-For example, Arch Linux has packages for the latest development version as AUR packages: `solidity <https://aur.archlinux.org/packages/solidity>`_
-and `solidity-bin <https://aur.archlinux.org/packages/solidity-bin>`_.
+Arch Linux provides a script for building and installing the latest release version in its AUR
+repository: `solidity <https://aur.archlinux.org/packages/solidity>`_.
+Alternatively, one can also install official binaries using the
+`solidity-bin <https://aur.archlinux.org/packages/solidity-bin>`_ script.
 
 .. note::
 
     Please be aware that `AUR <https://wiki.archlinux.org/title/Arch_User_Repository>`_ packages
-    are user-produced content and unofficial packages. Exercise caution when using them.
+    are produced and maintained by users and not vetted in any way by the distro maintainers.
+    Exercise caution when using them.
+
+On Nix, unofficial builds are available via `solc.nix <https://github.com/hellwolf/solc.nix>`_.
 
 There is also a `snap package <https://snapcraft.io/solc>`_, however, it is **currently unmaintained**.
 It is installable in all the `supported Linux distros <https://snapcraft.io/docs/core/install>`_. To
@@ -191,6 +197,8 @@ Install it using ``brew``:
     brew unlink solidity
     # eg. Install 0.4.8
     brew install solidity.rb
+
+.. _static-binaries:
 
 Static Binaries
 ===============

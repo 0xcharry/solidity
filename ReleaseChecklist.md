@@ -3,8 +3,6 @@
 ## Requirements
 - [ ] GitHub account with access to [solidity](https://github.com/argotorg/solidity), [solc-js](https://github.com/argotorg/solc-js),
       [solc-bin](https://github.com/argotorg/solc-bin), [solidity-website](https://github.com/argotorg/solidity-website).
-- [ ] DockerHub account with push rights to the [`solc` image](https://hub.docker.com/r/ethereum/solc).
-- [ ] Ubuntu/Debian dependencies of the Docker script: `docker-buildx`.
 - [ ] [npm Registry](https://www.npmjs.com) account added as a collaborator for the [`solc` package](https://www.npmjs.com/package/solc).
 - [ ] Access to the [solidity_lang Twitter account](https://twitter.com/solidity_lang).
 - [ ] [Reddit](https://www.reddit.com) account that is at least 10 days old with a minimum of 20 comment karma (`/r/ethereum` requirements).
@@ -72,10 +70,6 @@ At least a day before the release:
 
 ### Homebrew and MacOS
 - [ ] Update the version and the hash (`sha256sum solidity_$VERSION.tar.gz`) in the [`solidity` formula in Homebrew core repository](https://github.com/Homebrew/homebrew-core/blob/master/Formula/s/solidity.rb).
-
-### Docker
-- [ ] Make sure `docker-buildx` is installed.
-- [ ] Run `./scripts/docker_deploy_manual.sh v$VERSION`.
 
 ### Release solc-js
 - [ ] Wait until solc-bin was properly deployed. You can test this via remix - a test run through remix is advisable anyway.

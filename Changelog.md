@@ -1,6 +1,8 @@
 ### 0.8.32 (unreleased)
 
 Language Features:
+* Syntax Checker: Warn about identifiers selected for future promotion to Solidity keywords.
+* Yul Analyzer: Warn about identifiers selected for future promotion to Yul keywords.
 
 Compiler Features:
 

@@ -1,8 +1,7 @@
 ==== Source: a ====
 contract A {}
 ==== Source: b ====
-import {A as super} from "a";
-contract C is super {}
+import {A as layout} from "a";
+contract C is layout {}
 // ----
-// DeclarationError 3726: (b:13-18): The name "super" is reserved.
-// Warning 2319: (b:13-18): This declaration shadows a builtin symbol.
+// Warning 6335: (a:0-13): "layout" will be promoted to keyword in the next breaking version and will not be allowed as an identifier anymore.

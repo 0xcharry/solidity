@@ -375,14 +375,14 @@ private:
 			if (!_ops.requiredInArgs(_stack[stackTop]) && _ops.requiredInTail(_stack[stackTop]))
 			{
 				// if it's already in tail, pop
-				if (_ops.stackStats.tailCount(_stack[stackTop]) >= 1)
+				if (_ops.stackStats.tailCount(_stack[stackTop]) >= 1 && _ops.offsetInTargetArgsRegion(stackTop) || _ops.stackStats.tailCount(_stack[stackTop]) > 1)
 				{
 					_stack.pop();
 					return true;
 				}
 
 				// if we need it down there, try to swap down
-				for (StackOffset tailOffset: stackTailRange(_stack, _ops.targetStats.tailSize))
+				for (StackOffset tailOffset: stackTailRange(_stack, _ops.targetStats.tailSize) | ranges::views::reverse)
 					if (
 						_stack.swapReachable(tailOffset) &&  // we can reach the offset
 						!(_ops.requiredInTail(_stack[tailOffset]) && _ops.stackStats.tailCount(_stack[tailOffset]) <= 1)  // it's okay to swap the tail offset out

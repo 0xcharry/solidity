@@ -2402,30 +2402,26 @@ void TypeChecker::typeCheckERC7201Builtin(FunctionCall const& _functionCall, Fun
 {
 	if (_functionCall.arguments().size() > 0)
 	{
-		auto const* literalArg = dynamic_cast<Literal const*>(_functionCall.arguments()[0].get());
-		auto const* variableString = dynamic_cast<Identifier const*>(_functionCall.arguments()[0].get());
-		bool validArg = false;
-		std::string errorMsg;
+		Type const* argumentType = _functionCall.arguments()[0].get()->annotation().type;
+		auto const* arrayType = dynamic_cast<ArrayType const*>(argumentType);
 
 		if (
+			!dynamic_cast<StringLiteralType const*>(argumentType) &&
 			(
-				literalArg &&
-				dynamic_cast<StringLiteralType const*>(literalArg->annotation().type)
-			) ||
-			(
-				variableString &&
-				dynamic_cast<ArrayType const*>(variableString->annotation().type) &&
-				dynamic_cast<ArrayType const*>(variableString->annotation().type)->isString() &&
-				*variableString->annotation().isConstant
+				!arrayType ||
+				!arrayType->isString()
 			)
 		)
-			validArg = true;
-
-		if (!validArg)
+		{
+			std::string errorMsg = "The argument to erc7201() builtin must be string.";
+			if (arrayType && arrayType->isByteArray())
+				errorMsg += " The supplied argument has type bytes.";
 			m_errorReporter.fatalTypeError(
-				6896_error, _functionCall.arguments()[0]->location(),
-				"The argument of builtin erc7201 must be either a constant string variable or a string literal."
+				6896_error,
+				_functionCall.arguments()[0]->location(),
+				errorMsg
 			);
+		}
 	}
 	typeCheckFunctionGeneralChecks(_functionCall, _functionType);
 }

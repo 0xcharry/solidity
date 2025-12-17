@@ -58,7 +58,7 @@ public:
 	);
 
 	/// Works the same as `evaluate` but swallows any errors that might occur in the evaluation and simply returns
-	/// `std::nullopt` instead.
+	/// `TypedValue` containing `std::monostate` instead.
 	static TypedValue tryEvaluate(Expression const& _expr);
 
 	/// Performs arbitrary-precision evaluation of a binary operator. Returns nullopt on cases like

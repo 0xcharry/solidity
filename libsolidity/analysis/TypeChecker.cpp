@@ -3249,13 +3249,26 @@ bool TypeChecker::visit(MemberAccess const& _memberAccess)
 	{
 		if (ContractType const* contractType = dynamic_cast<decltype(contractType)>(typeType->actualType()))
 		{
+			// ContractType has only user defined members, so annotation.referencedDeclaration is not NULL.
+			// See `ContractType::nativeMembers` for details.
+			solAssert(annotation.referencedDeclaration);
 			annotation.isLValue = annotation.referencedDeclaration->isLValue();
+			// In case of an expression like `C.foo`, where `foo` is a function, assign C's purity to `C.foo`.
+			// TODO: However, this does not allow to assign the expression to a constant variable, because of
+			// TODO: different kind. Left-hand side of the variable declaration never has `Declaration` kind.
 			if (
 				auto const* functionType = dynamic_cast<FunctionType const*>(annotation.type);
 				functionType &&
 				functionType->kind() == FunctionType::Kind::Declaration
 			)
 				annotation.isPure = *_memberAccess.expression().annotation().isPure;
+			// In case `Base.value` or `Lib.value` and when `value` is constant, the whole expression is pure.
+			else if (
+				auto const* varDecl = dynamic_cast<VariableDeclaration const*>(annotation.referencedDeclaration);
+				varDecl &&
+				varDecl->isConstant()
+			)
+				annotation.isPure = true;
 		}
 		else
 			annotation.isLValue = false;
@@ -3321,14 +3334,6 @@ bool TypeChecker::visit(MemberAccess const& _memberAccess)
 		)
 			annotation.isPure = true;
 	}
-
-	if (
-		auto const* varDecl = dynamic_cast<VariableDeclaration const*>(annotation.referencedDeclaration);
-		!annotation.isPure.set() &&
-		varDecl &&
-		varDecl->isConstant()
-	)
-		annotation.isPure = true;
 
 	if (auto magicType = dynamic_cast<MagicType const*>(exprType))
 	{

@@ -3715,7 +3715,9 @@ bool FunctionType::isPure() const
 		m_kind == Kind::Wrap ||
 		m_kind == Kind::Unwrap ||
 		m_kind == Kind::BytesConcat ||
-		m_kind == Kind::StringConcat;
+		m_kind == Kind::StringConcat ||
+		m_kind == Kind::Error ||
+		m_kind == Kind::Event;
 }
 
 TypePointers FunctionType::parseElementaryTypeVector(strings const& _types)

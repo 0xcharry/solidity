@@ -3259,7 +3259,11 @@ bool TypeChecker::visit(MemberAccess const& _memberAccess)
 			if (
 				auto const* functionType = dynamic_cast<FunctionType const*>(annotation.type);
 				functionType &&
-				functionType->kind() == FunctionType::Kind::Declaration
+				(
+					functionType->kind() == FunctionType::Kind::Declaration ||
+					functionType->kind() == FunctionType::Kind::Event ||
+					functionType->kind() == FunctionType::Kind::Error
+				)
 			)
 				annotation.isPure = *_memberAccess.expression().annotation().isPure;
 			// In case `Base.value` or `Lib.value` and when `value` is constant, the whole expression is pure.
@@ -3418,9 +3422,7 @@ bool TypeChecker::visit(MemberAccess const& _memberAccess)
 		auto const* funcType = dynamic_cast<FunctionType const*>(annotation.type);
 		funcType &&
 		funcType->kind() != FunctionType::Kind::Declaration &&
-		funcType->kind() != FunctionType::Kind::Internal &&
-		funcType->kind() != FunctionType::Kind::Error &&
-		funcType->kind() != FunctionType::Kind::Event
+		funcType->kind() != FunctionType::Kind::Internal
 	)
 		solAssert(funcType->isPure() == *annotation.isPure);
 

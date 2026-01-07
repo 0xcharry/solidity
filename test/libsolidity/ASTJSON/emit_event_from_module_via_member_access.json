@@ -955,7 +955,7 @@
                       "id": 59,
                       "isConstant": false,
                       "isLValue": false,
-                      "isPure": false,
+                      "isPure": true,
                       "lValueRequested": false,
                       "memberLocation": "265:9:2",
                       "memberName": "AContract",

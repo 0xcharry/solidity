@@ -453,7 +453,7 @@
                       "id": 39,
                       "isConstant": false,
                       "isLValue": false,
-                      "isPure": true,
+                      "isPure": false,
                       "lValueRequested": false,
                       "memberLocation": "284:9:2",
                       "memberName": "AContract",

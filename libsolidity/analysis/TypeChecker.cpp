@@ -3261,11 +3261,19 @@ bool TypeChecker::visit(MemberAccess const& _memberAccess)
 				functionType &&
 				(
 					functionType->kind() == FunctionType::Kind::Declaration ||
-					functionType->kind() == FunctionType::Kind::Event ||
 					functionType->kind() == FunctionType::Kind::Error
 				)
 			)
-				annotation.isPure = *_memberAccess.expression().annotation().isPure;
+				annotation.isPure = true;
+			else if (
+				auto const* typeTypeMember = dynamic_cast<TypeType const*>(annotation.type);
+				typeTypeMember &&
+				(
+					dynamic_cast<StructType const*>(typeTypeMember->actualType()) ||
+					dynamic_cast<EnumType const*>(typeTypeMember->actualType())
+				)
+			)
+				annotation.isPure = true;
 			// In case `Base.value` or `Lib.value` and when `value` is constant, the whole expression is pure.
 			else if (
 				auto const* varDecl = dynamic_cast<VariableDeclaration const*>(annotation.referencedDeclaration);
@@ -3279,7 +3287,24 @@ bool TypeChecker::visit(MemberAccess const& _memberAccess)
 	}
 	else if (exprType->category() == Type::Category::Module)
 	{
-		annotation.isPure = *_memberAccess.expression().annotation().isPure;
+		if (auto const* functionType = dynamic_cast<FunctionType const*>(annotation.type);
+			functionType &&
+			functionType->isPure()
+		)
+			annotation.isPure = true;
+		else if (
+			auto const* typeTypeMember = dynamic_cast<TypeType const*>(annotation.type);
+			typeTypeMember &&
+			(
+				dynamic_cast<StructType const*>(typeTypeMember->actualType()) ||
+				dynamic_cast<ContractType const*>(typeTypeMember->actualType()) ||
+				dynamic_cast<EnumType const*>(typeTypeMember->actualType())
+			)
+		)
+			annotation.isPure = true;
+		else if (auto const* varDecl = dynamic_cast<VariableDeclaration const*>(annotation.referencedDeclaration))
+			annotation.isPure = varDecl->isConstant();
+
 		annotation.isLValue = false;
 	}
 	else

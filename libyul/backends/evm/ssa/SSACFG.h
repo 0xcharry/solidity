@@ -281,7 +281,8 @@ public:
 	std::string toDot(
 		bool _includeDiGraphDefinition=true,
 		std::optional<size_t> _functionIndex=std::nullopt,
-		LivenessAnalysis const* _liveness=nullptr
+		LivenessAnalysis const* _liveness=nullptr,
+		SSACFGStackLayout const* _stackLayout=nullptr
 	) const;
 
 	PhiValue const& phiInfo(ValueId const& _valueId) const

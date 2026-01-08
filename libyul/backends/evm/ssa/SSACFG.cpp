@@ -20,6 +20,8 @@
 
 #include <libyul/backends/evm/ssa/JunkAdmittingBlocksFinder.h>
 #include <libyul/backends/evm/ssa/LivenessAnalysis.h>
+#include <libyul/backends/evm/ssa/Stack.h>
+#include <libyul/backends/evm/SSACFGStackLayout.h>
 
 #include <libsolutil/StringUtils.h>
 #include <libsolutil/Visitor.h>
@@ -41,15 +43,15 @@ namespace
 class SSACFGPrinter
 {
 public:
-	SSACFGPrinter(SSACFG const& _cfg, SSACFG::BlockId _blockId, LivenessAnalysis const* _liveness):
-		m_cfg(_cfg), m_functionIndex(0), m_liveness(_liveness)
+	SSACFGPrinter(SSACFG const& _cfg, SSACFG::BlockId _blockId, LivenessAnalysis const* _liveness, SSACFGStackLayout const* _stackLayout = nullptr):
+		m_cfg(_cfg), m_functionIndex(0), m_liveness(_liveness), m_stackLayout(_stackLayout)
 	{
 		if (_liveness)
 			m_junkAdmittingBlocks = std::make_unique<JunkAdmittingBlocksFinder>(_cfg, _liveness->topologicalSort());
 		printBlock(_blockId);
 	}
-	SSACFGPrinter(SSACFG const& _cfg, size_t _functionIndex, Scope::Function const& _function, LivenessAnalysis const* _liveness):
-		m_cfg(_cfg), m_functionIndex(_functionIndex), m_liveness(_liveness)
+	SSACFGPrinter(SSACFG const& _cfg, size_t _functionIndex, Scope::Function const& _function, LivenessAnalysis const* _liveness, SSACFGStackLayout const* _stackLayout = nullptr):
+		m_cfg(_cfg), m_functionIndex(_functionIndex), m_liveness(_liveness), m_stackLayout(_stackLayout)
 	{
 		if (_liveness)
 			m_junkAdmittingBlocks = std::make_unique<JunkAdmittingBlocksFinder>(_cfg, _liveness->topologicalSort());
@@ -146,6 +148,19 @@ private:
 			}
 			else
 				m_result << fmt::format("{} [{}label=\"\\\nBlock {}\\n", formatBlockHandle(_id), revertPathInfo, _id.value);
+
+			if (m_stackLayout)
+			{
+				auto const& blockLayout = (*m_stackLayout)[_id];
+				m_result << fmt::format(
+					"StackIn: {}\\l\\\n",
+					stackToString(blockLayout.stackIn)
+				);
+				m_result << fmt::format(
+					"StackOut: {}\\l\\n",
+					stackToString(blockLayout.stackOut)
+				);
+			}
 
 			for (auto const& phi: _block.phis)
 			{
@@ -286,6 +301,7 @@ private:
 	std::unique_ptr<JunkAdmittingBlocksFinder> m_junkAdmittingBlocks;
 	size_t m_functionIndex;
 	LivenessAnalysis const* m_liveness;
+	SSACFGStackLayout const* m_stackLayout;
 	std::stringstream m_result{};
 };
 }
@@ -308,16 +324,17 @@ std::string SSACFG::ValueId::str(SSACFG const& _cfg) const
 std::string SSACFG::toDot(
 	bool _includeDiGraphDefinition,
 	std::optional<size_t> _functionIndex,
-	LivenessAnalysis const* _liveness
+	LivenessAnalysis const* _liveness,
+	SSACFGStackLayout const* _stackLayout
 ) const
 {
 	std::ostringstream output;
 	if (_includeDiGraphDefinition)
 		output << "digraph SSACFG {\nnodesep=0.7;\ngraph[fontname=\"DejaVu Sans\", rankdir=LR]\nnode[shape=box,fontname=\"DejaVu Sans\"];\n\n";
 	if (function)
-		output << SSACFGPrinter(*this, _functionIndex ? *_functionIndex : static_cast<size_t>(1), *function, _liveness);
+		output << SSACFGPrinter(*this, _functionIndex ? *_functionIndex : static_cast<size_t>(1), *function, _liveness, _stackLayout);
 	else
-		output << SSACFGPrinter(*this, entry, _liveness);
+		output << SSACFGPrinter(*this, entry, _liveness, _stackLayout);
 	if (_includeDiGraphDefinition)
 		output << "}\n";
 	return output.str();

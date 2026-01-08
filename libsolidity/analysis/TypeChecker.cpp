@@ -3254,15 +3254,15 @@ bool TypeChecker::visit(MemberAccess const& _memberAccess)
 			solAssert(annotation.referencedDeclaration);
 			annotation.isLValue = annotation.referencedDeclaration->isLValue();
 			// In case of an expression like `C.foo`, where `foo` is a function, assign C's purity to `C.foo`.
-			// TODO: However, this does not allow to assign the expression to a constant variable, because of
-			// TODO: different kind. Left-hand side of the variable declaration never has `Declaration` kind.
+			// TODO: However, in case a function this does not allow to assign the expression to a constant variable,
+			// TODO: because of different kind. Left-hand side of the variable declaration never has `Declaration` kind.
 			if (
 				auto const* functionType = dynamic_cast<FunctionType const*>(annotation.type);
 				functionType &&
 				(
+					functionType->isPure() ||
 					functionType->kind() == FunctionType::Kind::Declaration ||
 					functionType->kind() == FunctionType::Kind::Internal ||
-					functionType->kind() == FunctionType::Kind::Error ||
 					functionType->kind() == FunctionType::Kind::Event
 				)
 			)
@@ -3292,9 +3292,9 @@ bool TypeChecker::visit(MemberAccess const& _memberAccess)
 		if (auto const* functionType = dynamic_cast<FunctionType const*>(annotation.type);
 			functionType &&
 			(
+				functionType->isPure() ||
 				functionType->kind() == FunctionType::Kind::Declaration ||
 				functionType->kind() == FunctionType::Kind::Internal ||
-				functionType->kind() == FunctionType::Kind::Error ||
 				functionType->kind() == FunctionType::Kind::Event
 			)
 		)

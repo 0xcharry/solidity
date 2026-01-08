@@ -3262,7 +3262,8 @@ bool TypeChecker::visit(MemberAccess const& _memberAccess)
 				(
 					functionType->kind() == FunctionType::Kind::Declaration ||
 					functionType->kind() == FunctionType::Kind::Internal ||
-					functionType->kind() == FunctionType::Kind::Error
+					functionType->kind() == FunctionType::Kind::Error ||
+					functionType->kind() == FunctionType::Kind::Event
 				)
 			)
 				annotation.isPure = true;
@@ -3293,7 +3294,8 @@ bool TypeChecker::visit(MemberAccess const& _memberAccess)
 			(
 				functionType->kind() == FunctionType::Kind::Declaration ||
 				functionType->kind() == FunctionType::Kind::Internal ||
-				functionType->kind() == FunctionType::Kind::Error
+				functionType->kind() == FunctionType::Kind::Error ||
+				functionType->kind() == FunctionType::Kind::Event
 			)
 		)
 			annotation.isPure = true;
@@ -3452,7 +3454,8 @@ bool TypeChecker::visit(MemberAccess const& _memberAccess)
 		auto const* funcType = dynamic_cast<FunctionType const*>(annotation.type);
 		funcType &&
 		funcType->kind() != FunctionType::Kind::Declaration &&
-		funcType->kind() != FunctionType::Kind::Internal
+		funcType->kind() != FunctionType::Kind::Internal &&
+		funcType->kind() != FunctionType::Kind::Event
 	)
 		solAssert(funcType->isPure() == *annotation.isPure);
 

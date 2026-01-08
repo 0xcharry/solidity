@@ -3261,6 +3261,7 @@ bool TypeChecker::visit(MemberAccess const& _memberAccess)
 				functionType &&
 				(
 					functionType->kind() == FunctionType::Kind::Declaration ||
+					functionType->kind() == FunctionType::Kind::Internal ||
 					functionType->kind() == FunctionType::Kind::Error
 				)
 			)
@@ -3289,7 +3290,11 @@ bool TypeChecker::visit(MemberAccess const& _memberAccess)
 	{
 		if (auto const* functionType = dynamic_cast<FunctionType const*>(annotation.type);
 			functionType &&
-			functionType->isPure()
+			(
+				functionType->kind() == FunctionType::Kind::Declaration ||
+				functionType->kind() == FunctionType::Kind::Internal ||
+				functionType->kind() == FunctionType::Kind::Error
+			)
 		)
 			annotation.isPure = true;
 		else if (

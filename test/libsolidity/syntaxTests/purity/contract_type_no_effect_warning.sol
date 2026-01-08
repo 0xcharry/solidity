@@ -20,7 +20,7 @@ contract C {
         Mod.Lib;
         L;
         C;
-        C.f; //FIXME:
+        C.f;
     }
 }
 // ----
@@ -33,3 +33,4 @@ contract C {
 // Warning 6133: (b:206-213): Statement has no effect.
 // Warning 6133: (b:223-224): Statement has no effect.
 // Warning 6133: (b:234-235): Statement has no effect.
+// Warning 6133: (b:245-248): Statement has no effect.

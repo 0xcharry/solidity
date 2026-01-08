@@ -14,20 +14,19 @@ library Lib {
 }
 
 contract C {
-    function fooContract () public pure {}
+    function fooContract () public {}
 
     function f() public pure {
         Mod.fooA;
-        fooContract;
+        fooContract; // FIXME: This should generate warning too.
         C.fooContract;
+        // TODO: Decide on these 3 cases. This function compiles so these expression should be pure, but they are not
+        // TODO: marked as pure in the TypeChecker implementation, so they don't generate warnings.
         Lib.fooLib;
         Mod.ALib.fooALib;
+        this.fooContract;
     }
 }
 // ----
-// Warning 6133: (b:197-202): Statement has no effect.
-// Warning 6133: (b:212-224): Statement has no effect.
-// Warning 6133: (b:234-250): Statement has no effect.
-// Warning 6133: (b:260-274): Statement has no effect.
-// Warning 6133: (b:284-301): Statement has no effect.
-// Warning 6133: (b:311-333): Statement has no effect.
+// Warning 6133: (b:180-188): Statement has no effect.
+// Warning 6133: (b:219-232): Statement has no effect.

@@ -23,6 +23,8 @@ contract C {
         ContractEnum;
         Lib.LibraryEnum;
         Mod.ALib.LibraryEnum;
+        GlobalEnum;
+        ContractEnum;
     }
 }
 // ----
@@ -32,3 +34,5 @@ contract C {
 // Warning 6133: (b:250-262): Statement has no effect.
 // Warning 6133: (b:272-287): Statement has no effect.
 // Warning 6133: (b:297-317): Statement has no effect.
+// Warning 6133: (b:327-337): Statement has no effect.
+// Warning 6133: (b:347-359): Statement has no effect.

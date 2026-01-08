@@ -23,6 +23,8 @@ contract C {
         ContractStruct;
         Lib.LibraryStruct;
         Mod.ALib.LibraryStruct;
+        GlobalStruct;
+        ContractStruct;
     }
 }
 // ----
@@ -32,3 +34,5 @@ contract C {
 // Warning 6133: (b:260-274): Statement has no effect.
 // Warning 6133: (b:284-301): Statement has no effect.
 // Warning 6133: (b:311-333): Statement has no effect.
+// Warning 6133: (b:343-355): Statement has no effect.
+// Warning 6133: (b:365-379): Statement has no effect.

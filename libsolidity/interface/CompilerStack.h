@@ -345,6 +345,9 @@ public:
 
 	std::optional<Json> yulCFGJson(std::string const& _contractName) const;
 
+	/// @returns the SSA-CFG as DOT graph for a contract.
+	std::optional<std::string> ssaCfgDot(std::string const& _contractName) const;
+
 	/// @returns the assembled object for a contract.
 	virtual evmasm::LinkerObject const& object(std::string const& _contractName) const override;
 

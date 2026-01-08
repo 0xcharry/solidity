@@ -88,6 +88,7 @@ struct CompilerOutputs
 			{"storage-layout", &CompilerOutputs::storageLayout},
 			{"transient-storage-layout", &CompilerOutputs::transientStorageLayout},
 			{"yul-cfg-json", &CompilerOutputs::yulCFGJson},
+			{"ssa-cfg-dot", &CompilerOutputs::ssaCfgDot},
 			{"ethdebug", &CompilerOutputs::ethdebug},
 			{"ethdebug-runtime", &CompilerOutputs::ethdebugRuntime},
 		};
@@ -104,6 +105,7 @@ struct CompilerOutputs
 	bool ir = false;
 	bool irAstJson = false;
 	bool yulCFGJson = false;
+	bool ssaCfgDot = false;
 	bool irOptimized = false;
 	bool irOptimizedAstJson = false;
 	bool signatureHashes = false;

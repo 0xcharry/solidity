@@ -25,6 +25,8 @@
 
 #include <solc/Exceptions.h>
 
+#include "libyul/backends/evm/ssa/ControlFlow.h"
+#include "libyul/backends/evm/ssa/SSACFGBuilder.h"
 #include "license.h"
 #include "solidity/BuildInfo.h"
 
@@ -319,6 +321,26 @@ void CommandLineInterface::handleYulCFGExport(std::string const& _contractName)
 			yulCFGJson.value_or(Json{}),
 			m_options.formatting.json
 		) << std::endl;
+	}
+}
+
+void CommandLineInterface::handleSSACFGDot(std::string const& _contractName)
+{
+	solAssert(CompilerInputModes.count(m_options.input.mode) == 1);
+
+	if (!m_options.compiler.outputs.ssaCfgDot)
+		return;
+
+	std::optional<std::string> const& ssaCfgDot = m_compiler->ssaCfgDot(_contractName);
+	if (!m_options.output.dir.empty())
+		createFile(
+			m_compiler->filesystemFriendlyName(_contractName) + "_ssa_cfg.dot",
+			ssaCfgDot.value_or("")
+		);
+	else
+	{
+		sout() << "SSA-CFG DOT:" << std::endl;
+		sout() << ssaCfgDot.value_or("") << std::endl;
 	}
 }
 
@@ -948,7 +970,8 @@ void CommandLineInterface::compile()
 		pipelineConfig.irOptimization =
 			m_options.compiler.outputs.irOptimized ||
 			m_options.compiler.outputs.irOptimizedAstJson ||
-			m_options.compiler.outputs.yulCFGJson;
+			m_options.compiler.outputs.yulCFGJson ||
+			m_options.compiler.outputs.ssaCfgDot;
 		pipelineConfig.irCodegen =
 			pipelineConfig.irOptimization ||
 			m_options.compiler.outputs.ir ||
@@ -1396,6 +1419,17 @@ void CommandLineInterface::assembleYul(yul::YulStack::Language _language, yul::Y
 			sout() << "Yul Control Flow Graph:" << std::endl << std::endl;
 			sout() << util::jsonPrint(stack.cfgJson(), m_options.formatting.json) << std::endl;
 		}
+		if (m_options.compiler.outputs.ssaCfgDot)
+		{
+			auto const& obj = *stack.parserResult();
+			std::unique_ptr<yul::ssa::ControlFlow> controlFlow = yul::ssa::SSACFGBuilder::build(
+				*obj.analysisInfo,
+				*obj.dialect(),
+				obj.code()->root(),
+				true
+			);
+			sout() << fmt::format("SSA-CFG Dot:\n\n{}\n", controlFlow->toDot());
+		}
 		solAssert(_targetMachine == yul::YulStack::Machine::EVM, "");
 		if (m_options.compiler.outputs.asm_)
 		{
@@ -1462,6 +1496,7 @@ void CommandLineInterface::outputCompilationResults()
 			handleIROptimized(contract);
 			handleIROptimizedAst(contract);
 			handleYulCFGExport(contract);
+			handleSSACFGDot(contract);
 			handleSignatureHashes(contract);
 			handleMetadata(contract);
 			handleABI(contract);

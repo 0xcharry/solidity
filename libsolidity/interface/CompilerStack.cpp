@@ -73,6 +73,8 @@
 #include <libyul/AST.h>
 #include <libyul/AsmParser.h>
 #include <libyul/optimiser/Suite.h>
+#include <libyul/backends/evm/ssa/ControlFlow.h>
+#include <libyul/backends/evm/ssa/SSACFGBuilder.h>
 
 #include <liblangutil/Scanner.h>
 #include <liblangutil/SemVerHandler.h>
@@ -235,9 +237,12 @@ void CompilerStack::setExperimental(bool _experimental)
 	m_experimental = _experimental;
 }
 
+struct CLIException: virtual util::Exception {};
+
 void CompilerStack::setSSACFGCodegen(bool _ssaCfgCodegen)
 {
 	solAssert(m_stackState < CompilationSuccessful, "Must set SSA CFG Codegen path before compilation.");
+	solRequire(m_experimental, CLIException, "SSA-CFG Codegen requires experimental mode.");
 	m_ssaCfgCodegen = _ssaCfgCodegen;
 }
 
@@ -1028,6 +1033,30 @@ std::optional<Json> CompilerStack::yulCFGJson(std::string const& _contractName) 
 	if (!currentContract.yulIROptimized)
 		return std::nullopt;
 	return loadGeneratedIR(*currentContract.yulIROptimized).cfgJson();
+}
+
+std::optional<std::string> CompilerStack::ssaCfgDot(std::string const& _contractName) const
+{
+	solAssert(m_stackState == CompilationSuccessful, "Compilation was not successful.");
+	solUnimplementedAssert(!isExperimentalSolidity());
+
+	// NOTE: Intentionally not using LazyInit. The artifact can get very large and we don't want to
+	// keep it around when compiling a large project containing many contracts.
+	Contract const& currentContract = contract(_contractName);
+	yulAssert(currentContract.contract);
+	yulAssert(currentContract.yulIROptimized.has_value() == currentContract.contract->canBeDeployed());
+	if (!currentContract.yulIROptimized)
+		return std::nullopt;
+
+	YulStack stack = loadGeneratedIR(*currentContract.yulIROptimized);
+	auto const& obj = *stack.parserResult();
+	std::unique_ptr<ssa::ControlFlow> controlFlow = ssa::SSACFGBuilder::build(
+		*obj.analysisInfo,
+		*obj.dialect(),
+		obj.code()->root(),
+		true
+	);
+	return controlFlow->toDot();
 }
 
 std::optional<std::string> const& CompilerStack::yulIROptimized(std::string const& _contractName) const

@@ -488,6 +488,7 @@ void CommandLineParser::parseOutputSelection()
 			CompilerOutputs::componentName(&CompilerOutputs::astCompactJson),
 			CompilerOutputs::componentName(&CompilerOutputs::asmJson),
 			CompilerOutputs::componentName(&CompilerOutputs::yulCFGJson),
+			CompilerOutputs::componentName(&CompilerOutputs::ssaCfgDot),
 			CompilerOutputs::componentName(&CompilerOutputs::ethdebug),
 		};
 		static std::set<std::string> const evmAssemblyJsonImportModeOutputs = {
@@ -792,6 +793,7 @@ General Information)").c_str(),
 		(CompilerOutputs::componentName(&CompilerOutputs::metadata).c_str(), "Combined Metadata JSON whose IPFS hash is stored on-chain.")
 		(CompilerOutputs::componentName(&CompilerOutputs::storageLayout).c_str(), "Slots, offsets and types of the contract's state variables located in storage.")
 		(CompilerOutputs::componentName(&CompilerOutputs::transientStorageLayout).c_str(), "Slots, offsets and types of the contract's state variables located in transient storage.")
+		(CompilerOutputs::componentName(&CompilerOutputs::ssaCfgDot).c_str(), "Output SSA-CFG Yul as dot graph.");
 	;
 	if (!_forHelp) // Note: We intentionally keep this undocumented for now.
 	{

@@ -3253,7 +3253,7 @@ bool TypeChecker::visit(MemberAccess const& _memberAccess)
 			// See `ContractType::nativeMembers` for details.
 			solAssert(annotation.referencedDeclaration);
 			annotation.isLValue = annotation.referencedDeclaration->isLValue();
-			// In case of an expression like `C.foo`, where `foo` is a function, assign C's purity to `C.foo`.
+			// Expressions like `C.foo`, `C.Ev` are pure and they must generate `Statement has no effect.` warning.
 			// TODO: However, in case a function this does not allow to assign the expression to a constant variable,
 			// TODO: because of different kind. Left-hand side of the variable declaration never has `Declaration` kind.
 			if (

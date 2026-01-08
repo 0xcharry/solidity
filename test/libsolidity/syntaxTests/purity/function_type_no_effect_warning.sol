@@ -24,9 +24,9 @@ contract C {
         // TODO: marked as pure in the TypeChecker implementation, so they don't generate warnings.
         Lib.fooLib;
         Mod.ALib.fooALib;
-        this.fooContract;
+        // this.fooContract; // Function declared as pure, but this expression (potentially) reads from the environment or state and thus requires "view".
     }
 }
 // ----
 // Warning 6133: (b:180-188): Statement has no effect.
-// Warning 6133: (b:219-232): Statement has no effect.
+// Warning 6133: (b:263-276): Statement has no effect.

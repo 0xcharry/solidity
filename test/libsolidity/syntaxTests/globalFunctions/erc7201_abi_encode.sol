@@ -7,4 +7,4 @@ contract C {
     }
 }
 // ----
-// TypeError 6896: (149-186): The argument of builtin erc7201 must be either a constant string variable or a string literal.
+// TypeError 6896: (149-186): The argument to erc7201() builtin must be string. The supplied argument has type bytes.
